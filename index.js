@@ -1,8 +1,4 @@
 const callsites = require('callsites');
-const getCallsite = (layer) => layer
-  .getFileName()
-  .replace(/\/[^\/]+$/, '')
-  .replace(process.cwd(), '');
 
 module.exports = (opts) => {
   const engine = require(opts.name);
@@ -14,7 +10,11 @@ module.exports = (opts) => {
   }
 
   return (template, data, callback) => {
-    const path = `${getCallsite(callsites()[2])}/${template}`;
+    const callsitePath = callsites()[2]
+      .getFileName()
+      .replace(/\/[^\/]+$/, '')
+      .replace(opts.opts.root, '');
+    const path = `${callsitePath}/${template}`;
     return render(path, data);
   }
 }
