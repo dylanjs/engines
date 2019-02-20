@@ -1,4 +1,5 @@
 const callsites = require('callsites');
+const { dirname, resolve } = require('path');
 
 module.exports = (opts) => {
   const engine = require(opts.name);
@@ -9,12 +10,13 @@ module.exports = (opts) => {
     render = engineInstance.render.bind(engineInstance);
   }
 
-  return (template, data, callback) => {
-    const callsitePath = callsites()[2]
-      .getFileName()
-      .replace(/\/[^\/]+$/, '')
-      .replace(opts.opts.root, '');
-    const path = `${callsitePath}/${template}`;
-    return render(path, data);
+  return {
+    instance: engineInstance,
+    render: (template, data, callback) => {
+      const from = callsites()[2].getFileName();
+      const fromDir = dirname(from);
+      const path = resolve(fromDir, template).replace(opts.opts.root, '');
+      return render(path, data);
+    }
   }
 }
