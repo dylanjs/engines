@@ -15,7 +15,7 @@ module.exports = (opts) => {
     render: (template, data, callback) => {
       const from = callsites()[2].getFileName();
       const fromDir = dirname(from);
-      const path = resolve(fromDir, template).replace(opts.opts.root, '');
+      const path = resolve(fromDir, template.replace(/^~/, '.'));
       return render(path, data);
     }
   }
